@@ -1,0 +1,79 @@
+#
+# Copyright © 2021 Bedag Informatik AG
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+## Build Squid
+FROM {{ build.image }} AS build
+
+LABEL  \{% for tag in _dest['tags']|list %}
+  "tag.{{ tag }}.repository"="{{ _dest['namespace'] }}/{{ _dest['name'] }}" \
+  "tag.{{ tag }}.source"="{{ _source["name"] }}:{{ _source["tag"] }}" \
+  "tag.{{ tag }}.git.repo"="{{ git_repo }}" \
+  "tag.{{ tag }}.git.ref"="{{ git_ref }}" \
+  "tag.{{ tag }}.git.commit"="{{ git_commit }}" \
+{%- endfor %}
+  "maintainer"="{{ maintainer }}" 
+
+## Build dependecies
+RUN apk add tar curl build-base autoconf automake libtool ed libressl-dev iptables-dev perl krb5 krb5-dev coreutils krb5-libs
+RUN apk add libecap-dev --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
+## Bulding automake 1.15 (needed by squdid build)
+RUN curl -L https://ftp.gnu.org/gnu/automake/automake-1.15.tar.gz -o automake-1.15.tar.gz\
+  && tar -xzvf automake-1.15.tar.gz \
+  && cd automake-1.15 \
+  && ./bootstrap.sh \
+  && ./configure \
+  && make \
+  && make install
+WORKDIR /${BUILD}
+RUN curl -L https://github.com/squid-cache/squid/archive/SQUID_{{ major }}_{{ minor }}_{{ patch }}.tar.gz -o $BUILD/squid.tar.gz \
+  && tar -xzf ${BUILD}/squid.tar.gz
+WORKDIR /${BUILD}/squid-SQUID_{{ major }}_{{ minor }}_{{ patch }}
+RUN ln -s /usr/bin/aclocal-1.16 /usr/bin/aclocal-1.15 \
+  && ./bootstrap.sh \
+  && ./configure --prefix=/usr/local/squid --enable-icmp --enable-delay-pools --enable-ecap --enable-linux-netfilter --enable-auth --with-openssl --disable-unlinkd\
+  && CFLAGS=-static make \
+  && make LDFLAGS='--static' \
+  && make install \
+  && mkdir /artifacts && cd /artifacts  \
+  && cp --parents /usr/lib/libecap* . \
+  && cp --parents /usr/lib/libltdl* . \
+  && cp --parents /usr/lib/libstdc* . \
+  && cp --parents /usr/lib/libgcc* . \
+  && cp --parents /lib/libc.musl-x86_64.so.1 .\
+  && cp --parents /lib/ld-* . \
+  && cp --parents -r /usr/lib/krb5* . \
+  && cp --parents /usr/lib/libkrb5* . \
+  && cp --parents /usr/lib/libssl* . \
+  && cp --parents /usr/lib/libcrypt* . \
+  && cp --parents /usr/lib/libk5crypto.so* . \
+  && cp --parents /usr/lib/libk5crypto.so* . \
+  && cp --parents /usr/lib/libcom_err* . \
+  && cp --parents /lib/libcom_err* . \
+  && cp --parents /usr/lib/libkeyutils.so* . \
+  && cp --parents -r /usr/local/squid/ . \
+  && cp --parents /usr/lib/libgssapi_krb5.so* . \
+  && cp --parents /etc/passwd . \
+  && chown nobody: /artifacts/usr/local/squid -R
+
+## Copy Squid binaries and libaries
+FROM {{ _source["name"] }}:{{ _source["tag"] }}
+
+ENV DIR=/usr/local/squid
+# Copy squid libs and enf
+COPY --from=build /artifacts ./
+# Copy user files
+WORKDIR $DIR
+#VOLUME ["$DIR/etc/","$DIR/var/"]
+ENTRYPOINT ["/usr/local/squid/sbin/squid"]
+CMD ["-N"]
