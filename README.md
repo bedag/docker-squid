@@ -2,7 +2,7 @@
 
  # squid Docker Image
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![docker-publish](https://github.com/Bedag/squid/workflows/docker-publish/badge.svg) [![Dockerhub](https://img.shields.io/docker/pulls/Bedag/squid?style=plastic)](https://hub.docker.com/r/Bedag/squid)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![docker-publish](https://github.com/bedag/squid/workflows/docker-publish/badge.svg) [![Dockerhub](https://img.shields.io/docker/pulls/bedag/squid?style=plastic)](https://hub.docker.com/r/bedag/squid)
 
 ![Bedag](https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg)
 
