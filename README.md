@@ -6,7 +6,7 @@
 
 ![Bedag](https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg)
 
-This is a docker project for [squiduardian](https://github.com/squiduardian/squiduardian/).
+This is a docker project for [squid](https://github.com/squid/squid/).
 
 ## Usage
 
