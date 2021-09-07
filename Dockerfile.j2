@@ -41,7 +41,7 @@ RUN curl -L https://github.com/squid-cache/squid/archive/SQUID_{{ major }}_{{ mi
 WORKDIR /${BUILD}/squid-SQUID_{{ major }}_{{ minor }}_{{ patch }}
 RUN ln -s /usr/bin/aclocal-1.16 /usr/bin/aclocal-1.15 \
   && ./bootstrap.sh \
-  && ./configure --prefix=/usr/local/squid --enable-icmp --enable-delay-pools --enable-ecap --enable-linux-netfilter --enable-auth --with-openssl --disable-unlinkd\
+  && ./configure --prefix=/usr/local/squid --enable-icmp --enable-delay-pools --enable-ecap --enable-linux-netfilter --enable-auth --with-openssl --disable-unlinkd --enable-icap-client\
   && CFLAGS=-static make \
   && make LDFLAGS='--static' \
   && make install \
