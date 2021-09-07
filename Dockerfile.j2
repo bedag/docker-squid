@@ -36,12 +36,12 @@ RUN curl -L https://ftp.gnu.org/gnu/automake/automake-1.15.tar.gz -o automake-1.
   && make \
   && make install
 WORKDIR /${BUILD}
-RUN curl -L https://github.com/squid-cache/squid/archive/SQUID_{{ major }}_{{ minor }}_{{ patch }}.tar.gz -o $BUILD/squid.tar.gz \
+RUN curl -L http://www.squid-cache.org/Versions/v{{ major }}/squid-{{ major }}.{{ minor }}.tar.gz -o $BUILD/squid.tar.gz \
   && tar -xzf ${BUILD}/squid.tar.gz
-WORKDIR /${BUILD}/squid-SQUID_{{ major }}_{{ minor }}_{{ patch }}
+WORKDIR /${BUILD}/squid-{{ major }}.{{ minor }}
 RUN ln -s /usr/bin/aclocal-1.16 /usr/bin/aclocal-1.15 \
   && ./bootstrap.sh \
-  && ./configure --prefix=/usr/local/squid --enable-icmp --enable-delay-pools --enable-ecap --enable-linux-netfilter --enable-auth --with-openssl --disable-unlinkd\
+  && ./configure --prefix=/usr/local/squid --enable-icmp --enable-delay-pools --enable-ecap --enable-linux-netfilter --enable-auth --with-openssl --disable-unlinkd --enable-icap-client\
   && CFLAGS=-static make \
   && make LDFLAGS='--static' \
   && make install \

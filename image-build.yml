@@ -40,12 +40,12 @@ global_vars: &global_vars
       image: alpine:3.13
 
 # e2g versions
-504vars: &504vars
+510vars: &510vars
   variables:
     <<: *global_vars
     major: 5
-    minor: 0
-    patch: 4
+    minor: 1
+    patch: 0
     latest: true
 
 # selectors for builds
@@ -75,6 +75,6 @@ build_debug_template: &build_debug_template
 # set newest release at the bottom
 builds:
 - <<: *build_prod_template
-  <<: *504vars
+  <<: *510vars
 - <<: *build_debug_template
-  <<: *504vars
+  <<: *510vars
