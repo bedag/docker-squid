@@ -26,7 +26,7 @@ prod_base: &prod_base
 
 debug_base: &debug_base
   source:
-    name: gcr.io/distroless/cc
+    name: gcr.io/distroless/cc-debian11
     tags: ["debug"]
 
 #global
