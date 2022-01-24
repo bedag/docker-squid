@@ -46,6 +46,22 @@ global_vars: &global_vars
     major: 5
     minor: 1
     patch: 0
+    latest: false
+    
+ 520vars: &520vars
+  variables:
+    <<: *global_vars
+    major: 5
+    minor: 2
+    patch: 0
+    latest: false
+ 
+ 530vars: &530vars
+  variables:
+    <<: *global_vars
+    major: 5
+    minor: 3
+    patch: 0
     latest: true
 
 # selectors for builds
@@ -78,3 +94,11 @@ builds:
   <<: *510vars
 - <<: *build_debug_template
   <<: *510vars
+- <<: *build_prod_template
+  <<: *520vars
+- <<: *build_debug_template
+  <<: *520vars
+- <<: *build_prod_template
+  <<: *530vars
+- <<: *build_debug_template
+  <<: *530vars
